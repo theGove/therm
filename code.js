@@ -1,5 +1,5 @@
 const factor=2
-const height=400
+const height=500
 const therm_top = 0
 const therm_left = 0
 const head_space= 10
@@ -30,8 +30,16 @@ function start_me_up(){
     //tag("tube").style.backgroundColor="green"
     scale_thermometer()
     add_numbers()
-    set_temp(320)
+    set_temp(0)
     add_goal(911)
+    const url="https://script.google.com/macros/s/AKfycbxqFnBNDhjQ0mwonAdYa8CPO_41ljdrs1xGl1xwF60fAOidtJYtE2IAEI-wzbUiWFVu/exec"
+    fetch(url)
+    .then((response) => response.json())
+    .then((data)=>{
+        //console.log("data",data.hours)   
+        tag("hours-recorded").innerHTML=Math.round(100*data.hours)/100
+        set_temp(data.hours)     
+    })
     
 }
 function scale_thermometer(){
@@ -64,8 +72,8 @@ function scale_thermometer(){
     
 
 }
-function add_numbers(){
-    for(let j=0;j<=1000;j=j+100){
+function add_numbers(first=0, last=1000, increment=100){
+    for(let j=first;j<=last;j=j+increment){
         add_number(j)
     }
 }
