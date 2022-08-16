@@ -28,7 +28,8 @@
                 and Rememberance 
             </div>    
             <div id="text">
-            Our service this week helps keep the promise to "Never Forget" and honor those killed and injured on 9/11, along with the brave first responders, recovery workers, volunteers, and members of our military who rose to serve in response to the September 11, 2001 attacks.<br><br><span style="color:darkred;font-weight: bold;">The Poway Stake is dedicated to giving at least 911 hours of service by 9/11/2022.</span>
+            Our service this week helps keep the promise to "Never Forget" and honor those killed and injured on 9/11, along with the brave first responders, recovery workers, volunteers, and members of our military who rose to serve in response to the September 11, 2001 attacks.<br><br><span style="color:darkred;font-weight: bold;">The Poway Stake is dedicated to giving at least 911 hours of service by 9/11/2022.</span><br><br>
+            So far, we have recorded <span id="hours-recorded" style="color: red; padding:3px; font-size: larger; font-weight: bold;">10</span> hours.
             <h2>Record your Service Here</h2>
             
                 <div id="form-div">
@@ -39,20 +40,32 @@
                                 <td><input type="date" id="date"></td>
                             </tr>
                             <tr>
-                                <td>Desciption<br>of Service</td>
+                                <td></td>
+                                <td id="v-date" class="valid"></td>
+                            </tr>
+                            <tr>
+                                <td>Description<br>of Service</td>
                                 <td><textarea  id="desc" cols="40" rows="4"></textarea></td>
                             </tr>
                             <tr>
-                                <td># of people</td>
-                                <td><input type="number" style="width:90px" id="peeps"></td>
+                                <td></td>
+                                <td id="v-desc" class="valid"></td>
                             </tr>
                             <tr>
-                                <td>Total  Hours</td>
-                                <td><input type="number" style="width:90px" id="hours"><span style="color:grey"> Be sure to click "Submit" below</span></td>
+                                <td># of People</td>
+                                <td><input type="number" style="width:90px" id="peeps" onchange="tot_hours()"></td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td><span style="color:grey">Each person served an average of 2.5 hours</span></td>
+                                <td id="v-peeps" class="valid"></td>
+                            </tr>
+                            <tr>
+                                <td>Total  Hours</td>
+                                <td><input type="number" style="width:90px" id="hours" onchange="tot_hours()"><span style="color:grey"> Be sure to click "Submit" below</span></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td id="v-hours" class="valid"></td>
                             </tr>
                             <tr>
                                 <td>Documentation</td>
@@ -70,7 +83,11 @@
                             </tr>
                             <tr>
                                 <td></td>
-                                <td style="text-align:right"><button style="padding:10px;font-size:25px;" onclick="submit_form()">Submit</button></td>
+                                <td id="v-email" class="valid"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><button type="button" style="padding:10px;font-size:25px;" onclick="submit_form()">Submit</button> <span id="thanx"></span></td>
                             </tr>
 
                     </form>

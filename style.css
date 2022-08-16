@@ -83,3 +83,6 @@ input{
 textarea{
     font-size: 24px;
 }
+.valid{
+    color:red
+}

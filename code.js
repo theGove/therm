@@ -5,6 +5,7 @@ const therm_left = 0
 const head_space= 10
 const max = 1000
 
+
 function set_temp(degrees){
     const tube=tag("tube")
     const bulb_top=tag("bulb").style.top.split("px")[0]
@@ -105,16 +106,7 @@ function add_goal(degrees){
 
 
 
-function set_tempx(degrees){
-    const tube=tag("tube")
-    const percent = degrees/max
-    const tube_top = parseInt(tag("tube-border").style.top.split("px")[0])
-    let bar_height = (((height-26 - (head_space*factor*.1))) * factor * (percent))+(18*factor )
-    tube.style.height = bar_height + 10 * factor
-    tube.style.top = tube_top + ((height*factor)-bar_height)
-    console.log(bar_height , 10 * factor)
-    console.log(tube_top + ((height*factor)-bar_height))
-}
+
 
 
 function tag(id){
@@ -123,5 +115,127 @@ function tag(id){
 
 
 function submit_form(){
-    alert("ready to submit")
+    
+    let valid=true
+    // data validation
+    if(tag("date").value){
+        tag("v-date").innerHTML=""
+    }else{    
+        tag("v-date").innerHTML="Date is required"
+        valid=false;
+    }
+    if(tag("desc").value){
+        tag("v-desc").innerHTML=""
+    }else{    
+        tag("v-desc").innerHTML='Description of service is required. <span style="color:black">For example: "Cleaned up litter in park".</span>'
+        valid=false;
+    }
+
+    if(tag("peeps").value){
+          tag("v-peeps").innerHTML=""
+          console.log("at peeps")
+    }else{    
+        console.log("not at peeps")
+        tag("v-peeps").innerHTML='Number of People is required.<span style="color:black"></span>'
+        valid=false;
+    }
+    if(tag("hours").value){
+        tag("v-hours").innerHTML=""
+    }else{    
+      tag("v-hours").innerHTML='Total Hours is required.<span style="color:black"> For example, if three people each worked on a project that lasted two hours, enter "6" here.</span>'
+      valid=false;
+    }
+
+    if(tag("email").value && !ValidateEmail(tag("email").value)){
+        tag("v-email").innerHTML='The email address entered is not valid.'
+        valid=false;
+    }else if(tag("photos").checked && !tag("email").value){
+            tag("v-email").innerHTML='Email is reqired when you indicate that you have photos or video to share.'
+            valid=false;
+    }else{
+        tag("v-email").innerHTML=''    
+    }
+
+    console.log("phemailtos", tag("email").value)
+
+    if(!valid){return}
+
+    tag("thanx").innerHTML='Submitting...'
+
+    const payload=[]
+    
+    payload.push("entry.1728423210=")
+    payload.push(tag("date").value)
+    payload.push("&entry.1238949363=")
+    payload.push(encodeURIComponent(tag("desc").value))
+    payload.push("&entry.780948230=")
+    payload.push(tag("peeps").value)
+    payload.push("&entry.495148900=")
+    payload.push(tag("hours").value)
+    payload.push("&entry.256341693=")
+
+    if(tag("photos").checked){
+        payload.push("Yes")
+    }else{
+        payload.push("No")
+    }
+    
+    payload.push("&entry.339495007=")
+    payload.push(encodeURIComponent(tag("name").value))
+    payload.push("&entry.658442213=")
+    payload.push(encodeURIComponent(tag("email").value))
+    
+
+
+    
+
+    const options = { 
+        method: "POST", 
+        mode: "no-cors",
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          },
+        body: payload.join(""),
+    }
+    fetch("https://docs.google.com/forms/u/0/d/e/1FAIpQLScPYoSN0oi0cswbTsCKJ72TDx3YvDSed8beigsx__x79D6H-g/formResponse", options)
+    .then((response) => response.text())
+    .then((data)=>{
+        console.log("success",data)
+        tag("thanx").innerHTML='Thank you for serving. Your hours have been recorded.'
+
+        let hrs=parseFloat(tag("hours-recorded").innerHTML)
+        hrs+=parseFloat(tag("hours").value)
+        tag("hours-recorded").innerHTML=Math.round(100*hrs)/100
+        set_temp(hrs)
+
+        tag("date").value=""
+        tag("desc").value=""
+        tag("peeps").value=""
+        tag("hours").value=""
+        tag("photos").checked=false  
+    });
+    //return false
+}
+
+function tot_hours(){
+    const peeps = tag("peeps").value
+    const hours = tag("hours").value
+    if(!peeps){tag("v-hours").innerHTML="";return}
+    if(!hours){tag("v-hours").innerHTML="";return}
+    if(isNaN(peeps)){tag("v-hours").innerHTML="";return}
+    if(isNaN(hours)){tag("v-hours").innerHTML="";return}
+    
+    tag("v-hours").innerHTML='<span style="color:grey">Each person served an average of <span style="color:black">' + Math.round(100*hours/peeps)/100+'</span> hours</span>'
+    
+    console.log()
+
+}
+
+function ValidateEmail(mail) 
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+  {
+    return (true)
+  }
+    return (false)
 }
