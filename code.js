@@ -1,5 +1,5 @@
 const factor=2
-const height=500
+const height=300
 const therm_top = 0
 const therm_left = 0
 const head_space= 10
