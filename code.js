@@ -19,7 +19,7 @@ function set_temp(degrees){
         add_numbers(0,(max/increment)+1)
         add_goal(911)
     }
-    
+
     const tube=tag("tube")
     const bulb_top=tag("bulb").style.top.split("px")[0]
     const the_top=get_mercury(degrees)
@@ -44,7 +44,7 @@ function start_me_up(){
     //tag("tube").style.backgroundColor="green"
     scale_thermometer()
     add_numbers(0,11)
-    set_temp(3050)
+    set_temp(0)
     add_goal(911)
     const url="https://script.google.com/macros/s/AKfycbxqFnBNDhjQ0mwonAdYa8CPO_41ljdrs1xGl1xwF60fAOidtJYtE2IAEI-wzbUiWFVu/exec"
     fetch(url)
@@ -52,7 +52,7 @@ function start_me_up(){
     .then((data)=>{
         //console.log("data",data.hours)   
         tag("hours-recorded").innerHTML=Math.round(100*data.hours)/100
-        //set_temp(data.hours)     
+        set_temp(data.hours)     
     })
     
 }
