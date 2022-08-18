@@ -87,3 +87,8 @@ textarea{
 .valid{
     color:red
 }
+.number{
+    white-space:nowrap;
+    font-family:Tahoma,Arial,sans-serif;
+    position:absolute;
+}

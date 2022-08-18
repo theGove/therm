@@ -3,25 +3,39 @@ const height=300
 const therm_top = 0
 const therm_left = 0
 const head_space= 10
-const max = 1000
+const increment=100
+let max = 0
+let degree_size = .5
 
 
 function set_temp(degrees){
+    
+    if(degrees > max){
+        // rescale the thermometer
+        while(degrees > max){
+            max+=increment
+        }
+        remove_numbers()
+        add_numbers(0,(max/increment)+1)
+        add_goal(911)
+    }
+    
     const tube=tag("tube")
     const bulb_top=tag("bulb").style.top.split("px")[0]
     const the_top=get_mercury(degrees)
     tube.style.top = the_top
     tube.style.height = bulb_top-the_top+10*factor
-    console.log(bulb.style.top)
-    console.log(tube.style.top)
 
 }
 
 function get_mercury(degrees){
     const tube=tag("tube")
     const percent = degrees/max
+    const offset=18*factor
     const tube_top = parseInt(tag("tube-border").style.top.split("px")[0])
-    let bar_height = (((height-26 - (head_space*factor*.1))) * factor * (percent))+(18*factor )
+    //let bar_height = (((height-26 - (head_space*factor*.1))) * factor * (percent))+(18*factor )
+    //console.log("mercury degree_size",degree_size, "degrees",degrees)
+    const bar_height = degrees*degree_size+offset
     return tube_top + ((height*factor)-bar_height)
 
 }
@@ -29,8 +43,8 @@ function get_mercury(degrees){
 function start_me_up(){    
     //tag("tube").style.backgroundColor="green"
     scale_thermometer()
-    add_numbers()
-    set_temp(0)
+    add_numbers(0,11)
+    set_temp(3050)
     add_goal(911)
     const url="https://script.google.com/macros/s/AKfycbxqFnBNDhjQ0mwonAdYa8CPO_41ljdrs1xGl1xwF60fAOidtJYtE2IAEI-wzbUiWFVu/exec"
     fetch(url)
@@ -38,7 +52,7 @@ function start_me_up(){
     .then((data)=>{
         //console.log("data",data.hours)   
         tag("hours-recorded").innerHTML=Math.round(100*data.hours)/100
-        set_temp(data.hours)     
+        //set_temp(data.hours)     
     })
     
 }
@@ -54,7 +68,7 @@ function scale_thermometer(){
     tube.style.left = 12*factor+therm_left
     tube.style.height = 10*factor
     tube.style.top = (height-(height/200))*factor+therm_top
-    console.log((height-(height/200))*factor+therm_top)
+    //console.log((height-(height/200))*factor+therm_top)
     
     const bulb_border=tag("bulb-border")
     bulb_border.style.height = 44*factor
@@ -72,24 +86,48 @@ function scale_thermometer(){
     
 
 }
-function add_numbers(first=0, last=1000, increment=100){
-    for(let j=first;j<=last;j=j+increment){
-        add_number(j)
+function add_numbers(first=0, count=11){
+    max=first+increment*(count-1)
+    const tube_top=parseInt(tag("tube-border").style.top.split("px")[0]) + head_space * factor
+    degree_size = .01
+
+    // figure out the degree size
+    while(get_mercury(first+increment*(count-1))> tube_top + head_space * factor){
+         degree_size+=.01
+       //console.log("degree_size",degree_size)
+     }
+
+    let clearance=  parseInt(tag("bulb").style.top.split("px")[0])   
+    for(let i=0;i<count;i++){
+        if(clearance > get_mercury(first+(i*increment)) - 7.7 * factor){
+          clearance = add_number(first+(i*increment))
+        }
+    }
+}
+
+function remove_numbers(){
+    const nums=document.getElementsByClassName("number")
+    for(let i=nums.length-1;i>=0;i--){
+        nums[i].remove()
     }
 }
 
 function add_number(degrees){
     const percent = degrees/max
+  //console.log ("degrees",degrees)
+  //console.log ("percent",percent)
     const new_div = document.createElement("div");
     const text=document.createTextNode("-" + degrees)
-    new_div.style.whiteSpace="nowrap"
-    new_div.style.fontFamily = "Tahoma,Arial,sans-serif"
+    new_div.className = "number"
     new_div.style.fontSize = (12*factor)+"px"
     new_div.appendChild(text);
-    new_div.style.position = "absolute"
     new_div.style.left=10*factor+therm_left + 23*factor 
-    new_div.style.top=get_mercury(degrees) - 7.7*factor
+    const mercury = get_mercury(degrees)
+  //console.log("mercury",mercury)
+    const div_top=mercury - 7.7*factor
+    new_div.style.top= div_top
     tag("therm").prepend(new_div)
+    return div_top-new_div.offsetHeight 
 }
 
 
@@ -97,11 +135,9 @@ function add_goal(degrees){
     const percent = degrees/max
     const new_div = document.createElement("div");
     const text=document.createTextNode(degrees + "-")
-    new_div.style.whiteSpace="nowrap"
-    new_div.style.fontFamily = "Tahoma,Arial,sans-serif"
+    new_div.className = "number"
     new_div.style.fontSize = (12*factor)+"px"
     new_div.appendChild(text);
-    new_div.style.position = "absolute"
     new_div.style.left=therm_left -20*factor
     new_div.style.width=31*factor
     new_div.style.textAlign="right"
@@ -141,9 +177,9 @@ function submit_form(){
 
     if(tag("peeps").value){
           tag("v-peeps").innerHTML=""
-          console.log("at peeps")
+        //console.log("at peeps")
     }else{    
-        console.log("not at peeps")
+      //console.log("not at peeps")
         tag("v-peeps").innerHTML='Number of People is required.<span style="color:black"></span>'
         valid=false;
     }
@@ -164,7 +200,7 @@ function submit_form(){
         tag("v-email").innerHTML=''    
     }
 
-    console.log("phemailtos", tag("email").value)
+  //console.log("phemailtos", tag("email").value)
 
     if(!valid){return}
 
@@ -208,7 +244,7 @@ function submit_form(){
     fetch("https://docs.google.com/forms/u/0/d/e/1FAIpQLScPYoSN0oi0cswbTsCKJ72TDx3YvDSed8beigsx__x79D6H-g/formResponse", options)
     .then((response) => response.text())
     .then((data)=>{
-        console.log("success",data)
+      //console.log("success",data)
         tag("thanx").innerHTML='Thank you for serving. Your hours have been recorded.'
 
         let hrs=parseFloat(tag("hours-recorded").innerHTML)
@@ -235,7 +271,7 @@ function tot_hours(){
     
     tag("v-hours").innerHTML='<span style="color:grey">Each person served an average of <span style="color:black">' + Math.round(100*hours/peeps)/100+'</span> hours</span>'
     
-    console.log()
+  //console.log()
 
 }
 
