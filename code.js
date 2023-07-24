@@ -6,6 +6,7 @@ const head_space= 10
 const increment=100
 let max = 0
 let degree_size = .5
+let unit=null
 
 
 function set_temp(degrees){
@@ -42,17 +43,38 @@ function get_mercury(degrees){
 
 function start_me_up(){    
     //tag("tube").style.backgroundColor="green"
+    const urlParams = new URLSearchParams(window.location.search);
+    unit = urlParams.get("unit") || "The_Poway_Stake"
+    console.log("unit", unit)
+
+    tag("unit").innerHTML=unit.split("_").join(" ")
+
+    const today = new Date();
+    const yr = today.getFullYear()
+    tag("year1").innerHTML = yr
+    tag("year2").innerHTML = yr
     scale_thermometer()
     add_numbers(0,11)
     set_temp(0)
     add_goal(911)
-    const url="https://script.google.com/macros/s/AKfycbxqFnBNDhjQ0mwonAdYa8CPO_41ljdrs1xGl1xwF60fAOidtJYtE2IAEI-wzbUiWFVu/exec"
+    
+// the url comes from the thermometer script owned by gove.allen
+    const url="https://script.google.com/macros/s/AKfycbx9LhTlYmQaC9B-dV1Q5p7R_dj1TLGoIf1hoLhX_Yt9YyCKxH1P_lDqtpeXqTLbSL__/exec"
     fetch(url)
     .then((response) => response.json())
     .then((data)=>{
-        //console.log("data",data.hours)   
-        tag("hours-recorded").innerHTML=Math.round(100*data.hours)/100
-        set_temp(data.hours)     
+        console.log("data",data)   
+        const service={}
+        for(let x=1;x<data[0].length;x++){
+            service[data[0][x]]=data[1][x]
+        }
+        console.log("unit",unit)   
+        console.log("service",service)   
+        console.log("service[unit]",service[unit])   
+        const service_hours=service[unit] || 0
+        
+        tag("hours-recorded").innerHTML=Math.round(100*service_hours)/100
+        set_temp(service_hours)     
     })
     
 }
@@ -226,11 +248,18 @@ function submit_form(){
     
     payload.push("&entry.339495007=")
     payload.push(encodeURIComponent(tag("name").value))
+
+    payload.push("&entry.1605407403=")
+    payload.push(encodeURIComponent(tag("dedication").value))
+
     payload.push("&entry.658442213=")
     payload.push(encodeURIComponent(tag("email").value))
     
+    payload.push("&entry.233642971=")
+    payload.push(unit)
+    
 
-
+    
     
 
     const options = { 
